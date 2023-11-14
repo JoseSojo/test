@@ -1,21 +1,49 @@
 const express = require('express');
 const cors = require('cors');
+const morgan = require('morgan');
 const fs = require('fs');
-const {multerMiddleware} = require('./middlewares/storage.middleware');
+const multer = require('multer');
+// const { multerMiddleware } = require('./middlewares/storage.middleware');
 const { Files, Links } = require('./confing');
 
 const app = express();
+app.use(morgan('dev'));
 app.use(cors());
 app.use(express.json());
 
-app.post('/file', multerMiddleware.single('file'), async (req, res) => {
+// STORAGE
+const storage = multer.diskStorage({
+    destination: function(req, file, cb) {
+        cb(null, 'storage');
+    },
+    filename: async function (req, file, cb) {
+        const ext = file.originalname.split(".").pop();
+        const file_name = `${file.fieldname}-${Date.now()}.${ext}`;
+        const fileNew = new Files({name:file_name,read:false});
+        
+        try {            
+            await fileNew.save();
+            console.log('new file creado');
+        } catch (error) {
+            console.log(error);
+        }
+
+        cb(null, file_name)
+    }
+})
+
+const upload = multer({storage:storage});
+
+app.post('/file', upload.single('file'), async (req, res) => {
     try {
         const files = await Files.findOne({ read:false });
         if(!files) {
             console.log('NOT_FILE');
             return;
         }
-        const file = `${__dirname}/files/file-1699920511596.txt`;
+
+        console.log('filess', files);
+        const file = `${__dirname}/storage/${files.name}`;
         fs.readFile(file, 'utf8', async (err, data) => {
             if(err) {
                 console.log(err);
@@ -24,7 +52,6 @@ app.post('/file', multerMiddleware.single('file'), async (req, res) => {
             }
             const palabras = [];
             const dataAll = data.split(' ');
-            console.log('palabras en bruto', dataAll.length);
             dataAll.map(async (key) => {
                 if(key.includes('chat.whatsapp.com')) {
                     let item = `http${key.split('http')[1]}`;
@@ -37,10 +64,9 @@ app.post('/file', multerMiddleware.single('file'), async (req, res) => {
                     }
                     
                 }
-            })
-
+            });
             
-            return res.json({response:'SUCCESS',total:palabras.length,body:palabras});
+            return res.status(200).json({response:'SUCCESS',total:palabras.length});
         })
     } catch (error) {
         console.log(error);
@@ -52,10 +78,12 @@ app.get('/file', async (req, res) => {
     const page = `${req.query.page}`;
     const sk = parseInt(page) * 100;
     const urls = await Links.find().skip(sk).limit(100);
-    return res.json({body:urls});
+    const algo = {body:urls}
+    console.log(algo)
+    return res.json(algo);
 })
 
-const port = process.env.PORT || 8080;
+const port = process.env.PORT || 7654;
 
 app.listen(port, (err, res) => {
     if (err) {
