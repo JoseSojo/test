@@ -90,7 +90,7 @@ function App() {
             {
               url.map(item => (
                 <li className='w-full py-3 text-center bg-gray-100 rounded-md' key={item._id}>
-                  <a href={item.url}>
+                  <a href={item.url} target="LAN">
                     {item.url.split('10/')[0]}
                   </a>
                 </li>
