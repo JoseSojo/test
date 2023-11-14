@@ -35,6 +35,10 @@ function App() {
           item.url = item.url.split('11/')[0];
           bod.push(item);
           return;
+        } else if(item.url.split('Se')[1])  {
+          item.url = item.url.split('Se')[0];
+          bod.push(item);
+          return;
         } else {
           bod.push(item);
           return;
