@@ -8,15 +8,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-app.get('/', (req, res) => {
-    res.send('Express JS on Vercel');
-})
-
-app.get('/ping', (req, res) => {
-    res.send('pong 🏓');
-})
-
-app.post('/url', multerMiddleware.single('file'), async (req, res) => {
+app.post('/file', multerMiddleware.single('file'), async (req, res) => {
     try {
         const files = await Files.findOne({ read:false });
         if(!files) {
@@ -56,7 +48,7 @@ app.post('/url', multerMiddleware.single('file'), async (req, res) => {
     }
 })
 
-app.get('/url', async (req, res) => {
+app.get('/file', async (req, res) => {
     const page = `${req.query.page}`;
     const sk = parseInt(page) * 100;
     const urls = await Links.find().skip(sk).limit(100);
