@@ -22,7 +22,7 @@ function App() {
       const bufferUrl: Links[] = response.body;
       const bod:Links[] = [];
 
-      bufferUrl.map((item, i)=>{
+      bufferUrl.map((item)=>{
         //if(item.url.split('2️⃣')[1] || item.url.split('3️⃣')[1] || item.url.split('🇺🇸')[1]) console.log(i)
         const basic = 'https://chat.whatsapp.com/';
         const key = item.url.split('https://chat.whatsapp.com/')[1];
