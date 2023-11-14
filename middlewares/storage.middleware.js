@@ -13,6 +13,7 @@ const storage = multer.diskStorage({
         const fileNew = new Files({name:fileNameRandom,read:false});
         try {            
             await fileNew.save();
+            console.log('new file creado');
         } catch (error) {
             console.log(error);
         }

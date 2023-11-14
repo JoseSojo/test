@@ -55,6 +55,10 @@ app.post('/file', upload.single('file'), async (req, res) => {
             dataAll.map(async (key) => {
                 if(key.includes('chat.whatsapp.com')) {
                     let item = `http${key.split('http')[1]}`;
+                    const basic = 'https://chat.whatsapp.com/';
+                    const key = item.split('https://chat.whatsapp.com/')[1];
+                    const sub = key.substring(0, 22);
+                    item = basic+sub;
                     
                     const link_url = await Links.findOne({ url: Links });
                     if(!link_url) {

@@ -32,9 +32,6 @@ function App() {
         bod.push(item)
       });
 
-      console.log('DNvzCFHs8NiILJfibacvjQ'.length);
-      console.log('JWI0bRPuSzJ5WWESNOxNWu'.length)
-
       setUrl(bod);
     }
     LoadLinks();
