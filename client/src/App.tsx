@@ -13,37 +13,27 @@ function App() {
 
   useEffect(()=> {
     const LoadLinks = async () => {
-      console.log(`${BASIC_URL}/file/?page=${pag}`)
       const res = await fetch(`${BASIC_URL}/file/?page=${pag}`);
-      console.log(res);
       if(!res.ok) {
         console.log('hubo un error');
         return;
       } 
       const response = await res.json();
-      console.log(response);
       const bufferUrl: Links[] = response.body;
       const bod:Links[] = [];
 
-      bufferUrl.map((item)=>{
-        console.log(item.url.split('11/'));
-        if(item.url.split('10/')[1]) {
-          item.url = item.url.split('10/')[0];
-          bod.push(item);
-          return;
-        } else if(item.url.split('11/')[1])  {
-          item.url = item.url.split('11/')[0];
-          bod.push(item);
-          return;
-        } else if(item.url.split('Se')[1])  {
-          item.url = item.url.split('Se')[0];
-          bod.push(item);
-          return;
-        } else {
-          bod.push(item);
-          return;
-        }
+      bufferUrl.map((item, i)=>{
+        //if(item.url.split('2️⃣')[1] || item.url.split('3️⃣')[1] || item.url.split('🇺🇸')[1]) console.log(i)
+        const basic = 'https://chat.whatsapp.com/';
+        const key = item.url.split('https://chat.whatsapp.com/')[1];
+        const sub = key.substring(0, 22);
+        item.url = basic+sub;
+        console.log(basic+sub)
+        bod.push(item)
       });
+
+      console.log('DNvzCFHs8NiILJfibacvjQ'.length);
+      console.log('JWI0bRPuSzJ5WWESNOxNWu'.length)
 
       setUrl(bod);
     }
