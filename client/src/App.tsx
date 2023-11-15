@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { BASIC_URL } from "./constants";
 import { ModalForm } from "./component/ModalForm";
 
@@ -11,7 +11,7 @@ function App() {
   const [url, setUrl] = useState<Links[] | null>(null);
   const [pag, setPag] = useState(0);
   const [modal, setModal] = useState(false);
-  const [load, setLoad] = useState(false);
+  const [load] = useState(false);
 
   const After = () => {
     setModal(false);
@@ -38,7 +38,7 @@ function App() {
     LoadLinks();
   }, [pag,load])
 
-  const handleClick = (id:string) => {
+  /*const handleClick = (id:string) => {
     const bloqued = async () => {
       const requestOptions = {
         method: 'PUT',
@@ -51,7 +51,7 @@ function App() {
 
       setLoad(!load);
     }
-  }
+  }*/
 
   return (
     <>
