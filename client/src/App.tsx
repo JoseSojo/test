@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { BASIC_URL } from "./constants";
+import { ModalForm } from "./component/ModalForm";
 
 interface Links {
   _id: string,
@@ -7,9 +8,14 @@ interface Links {
   status: number
 }
 function App() {
-  const [file, setFile] = useState<File | null>();
   const [url, setUrl] = useState<Links[] | null>(null);
   const [pag, setPag] = useState(0);
+  const [modal, setModal] = useState(false);
+  const [load, setLoad] = useState(false);
+
+  const After = () => {
+    setModal(false);
+  }
 
   useEffect(()=> {
     const LoadLinks = async () => {
@@ -23,62 +29,50 @@ function App() {
       const bod:Links[] = [];
 
       bufferUrl.map((item)=>{
-        //if(item.url.split('2️⃣')[1] || item.url.split('3️⃣')[1] || item.url.split('🇺🇸')[1]) console.log(i)
-        const basic = 'https://chat.whatsapp.com/';
-        const key = item.url.split('https://chat.whatsapp.com/')[1];
-        const sub = key.substring(0, 22);
-        item.url = basic+sub;
-        console.log(basic+sub)
+
         bod.push(item)
       });
 
       setUrl(bod);
     }
     LoadLinks();
-  }, [pag])
+  }, [pag,load])
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-
-    const saveFile = async () => {
-      if(!file) return;
-
-      const formData = new FormData();
-      formData.append('file', file);
-      const res = await fetch(`${BASIC_URL}/file`, {
-        "method":"POST",
-        "body":formData
-      });
+  const handleClick = (id:string) => {
+    const bloqued = async () => {
+      const requestOptions = {
+        method: 'PUT',
+        header: {
+          "Content-Type":"application/json"
+        }
+      }
+      const res = await fetch(`${BASIC_URL}/bloqued/{id}`, requestOptions);
       const response = await res.json();
-      if(response.response == 'SUCCESS') setPag(0);
+
+      setLoad(!load);
     }
-    saveFile();
   }
 
   return (
     <>
-      <form onSubmit={handleSubmit}>
-        <input onChange={(event)=>{
-          if(event.target.files && event.target.files.length > 0) setFile(event.target.files[0]);
+      { modal && <ModalForm cb={After} /> }
 
-        }} type='file' className='px-10 py-2 bg-gray-200 fnot-bold' />
-        <input type='submit' value='cargar' />
-      </form>
-      <main className='bg-gray-400 w-full min-h-screen'>
-        <button onClick={()=>{
-          setUrl(null);
-          console.log('paguina:', pag);
-          setPag(pag+1);
-        }}>pagina {pag}</button>
+      <main className='bg-gray-100 w-full min-h-screen grid'>
+        <button 
+          onClick={()=>{setModal(true)}}
+          className='py-3 px-5 bg-green-500 hover:bg-green-600 rounded-md mx-auto h-16 font-bold mt-5'
+        >
+          Cargar Archivo
+        </button>
         {
           url === null
           ? <>CARGANDO...</>
           : <ul className='w-[80vw] grid place-items-center gap-y-3 mx-auto'>
             {
               url.map(item => (
-                <li className='w-full py-3 text-center bg-gray-100 rounded-md' key={item._id}>
-                  <a href={item.url} target="LAN">
-                    {item.url.split('10/')[0]}
+                <li className='w-full py-3 text-center visited:text-white visited:bg.blue-100 text-black bg-blue-400 rounded-md' key={item._id}>
+                  <a href={`https://chat.whatsapp.com/${item.url}`} target="LAN">
+                    {item.url}
                   </a>
                 </li>
               ))
@@ -86,6 +80,15 @@ function App() {
           </ul>
         }
       </main>
+      <footer className='flex justify-between'>
+        {
+          pag === 0
+          ? <span></span>
+          : <button onClick={()=>setPag(pag-1)} className='py-3 px-10 font bold bg-blue-500 hover:bg-blue-600'>Anterior</button>
+        }
+        <button onClick={()=>setPag(pag+1)} className='py-3 px-10 font bold bg-blue-500 hover:bg-blue-600'>Seguiente</button>
+        
+      </footer>
     </>
   )
 }

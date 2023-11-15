@@ -10,13 +10,14 @@ const LinksSchema = new mongoose.Schema({
     status: Number
 });
 
-const Links = mongoose.model('urls', LinksSchema);
+const Links = mongoose.model('myurls', LinksSchema);
 
 const FilesSchema = new mongoose.Schema({
     name: String,
-    read: Boolean
+    read: Boolean,
+    group_name: String
 });
 
-const Files = mongoose.model('this_files', FilesSchema);
+const Files = mongoose.model('myfiles', FilesSchema);
 
 module.exports = { Links, Files }
